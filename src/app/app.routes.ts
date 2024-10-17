@@ -12,7 +12,18 @@ export const routes: Routes = [
         (m) => m.QuillEditorComponent
       ),
   },
+  {
+    path: '',
+    title: 'Docs Home',
+    loadComponent: () =>
+      import('./home/home.component').then((m) => m.HomeComponent),
+  },
 
+  {
+    path: 'home',
+    redirectTo: '',
+    pathMatch: 'full',
+  },
   {
     path: '**',
     loadComponent: () =>
