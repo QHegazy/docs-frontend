@@ -11,31 +11,46 @@
       </div>
 
       <div class="flex items-center justify-end gap-3">
-        <!-- Check if the user is logged in -->
         @if (user) {
-          <h1>{{user}}</h1>
         <ng-container>
-          <picture class="items-center justify-center cursor-pointer">
-            <img
-              src=""
-              class="rounded-full hover:ring-2 ring-blue-600"
-              alt="User Avatar"
-            />
-          </picture>
-          <menu>
-            <button
-              class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-              (click)="logout()"
+          <div class="relative group">
+            <picture class="items-center justify-center cursor-pointer">
+              <img
+                [src]="user.ImageURL"
+                [alt]="user.Name"
+                class="w-10 h-10 rounded-full hover:ring-2 transition-all duration-300 ease-in-out ring-blue-600 object-cover"
+              />
+            </picture>
+            <ul
+              class="absolute top-10 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto w-48 border border-gray-200"
             >
-              Logout
-            </button>
-          </menu>
+              <li class="px-4 py-2 border-b border-gray-200">
+                <p class="text-gray-800 font-medium">{{ user.Name }}</p>
+              </li>
+              <li class="px-4 py-2 border-b border-gray-200">
+                <p class="text-gray-600 text-sm truncate">{{ user.Email }}</p>
+              </li>
+              <li class="px-4 py-2">
+                <button
+                  class="w-full text-left cursor-pointer inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                  (click)="logout()"
+                >
+                  Logout
+                </button>
+              </li>
+            </ul>
+          </div>
         </ng-container>
-        }
-        @else {
-          <ng-container>
-            
-          </ng-container>
+
+        } @else {
+        <ng-container>
+          <button
+            class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            (click)="login()"
+          >
+            login
+          </button>
+        </ng-container>
         }
       </div>
     </div>
