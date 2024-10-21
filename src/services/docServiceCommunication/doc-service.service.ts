@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root',
 })
-export class DocServiceService {
+export class DocServiceCommunication {
   private socket!: Socket;
   private http: HttpClient = inject(HttpClient);
 
@@ -65,10 +65,12 @@ export class DocServiceService {
     });
   }
   getDocMessage(): Observable<any> {
-    return this.http.get<any>('http://localhost:3000/doc/670e7027d2ebe79b16092671');
+    return this.http.get<any>(
+      'http://localhost:3000/doc/670e7027d2ebe79b16092671'
+    );
   }
 
-  saveDocById(id: string,message: object) {
+  saveDocById(id: string, message: object) {
     if (this.socket) {
       this.socket.emit('save-doc', message);
     }

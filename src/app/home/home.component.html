@@ -5,7 +5,7 @@
       class="my-2 mx-2 grid grid-cols-2 gap-4 sm:grid-cols-5 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8"
     >
       @for (item of list; track $index) {
-      <a href="">
+      <a (click)="createDoc()">
         <img
           class="bg-auto hover:border-red-500 border-spacing-2 border-2 rounded-md"
           src="https://cdn4.iconfinder.com/data/icons/glyph-1-ui-part-4-of-4/100/pack07-05-512.png"

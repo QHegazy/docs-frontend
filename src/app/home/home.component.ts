@@ -5,8 +5,11 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-list = [1,2,3,4,5]
+  list = [1, 2, 3, 4, 5];
+  createDoc() {
+    console.log('create doc');
+  }
 }

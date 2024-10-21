@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import Quill from 'quill';
-import { DocServiceService } from '../../services/docService/doc-service.service';
+import { DocServiceService } from '../../services/docServiceCommunication/doc-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { interval, timeout, timer } from 'rxjs';
 import { AuthService } from '../../services/authService/auth.service';
