@@ -5,9 +5,9 @@
       class="my-2 mx-2 grid grid-cols-2 gap-4 sm:grid-cols-5 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8"
     >
       @for (item of list; track $index) {
-      <a (click)="createDoc()">
+      <a (click)="openDialog(item)">
         <img
-          class="bg-auto hover:border-red-500 border-spacing-2 border-2 rounded-md"
+          class="bg-auto cursor-pointer hover:border-red-500 border-spacing-2 border-2 rounded-md"
           src="https://cdn4.iconfinder.com/data/icons/glyph-1-ui-part-4-of-4/100/pack07-05-512.png"
           alt=""
           srcset=""
@@ -38,7 +38,7 @@
         <option>Read by anyone</option>
       </select>
     </div>
-    <h1 class="text-left pl-1 pt-2 font-bold text-lg"> Documents</h1>
+    <h1 class="text-left pl-1 pt-2 font-bold text-lg">Documents</h1>
     <div
       class="my-2 mx-2 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
     >

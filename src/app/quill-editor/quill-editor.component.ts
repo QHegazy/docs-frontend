@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import Quill from 'quill';
-import { DocServiceService } from '../../services/docServiceCommunication/doc-service.service';
+import { DocServiceCommunication } from '../../services/docServiceCommunication/doc-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { interval, timeout, timer } from 'rxjs';
 import { AuthService } from '../../services/authService/auth.service';
@@ -25,7 +25,7 @@ import { AuthService } from '../../services/authService/auth.service';
 export class QuillEditorComponent implements AfterViewInit, OnInit {
   private quill!: Quill;
   id!: string;
-  doc_service = inject(DocServiceService);
+  doc_service = inject(DocServiceCommunication);
   auth: AuthService = inject(AuthService);
   message: any = 'wq';
   randomCookie: any = 'qwe';

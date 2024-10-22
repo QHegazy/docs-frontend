@@ -13,7 +13,7 @@ export class DocService {
     return this.http.get<any>(`${this.docAPI}/${id}`);
   }
 
-  createDoc(message: object) {
-    return this.http.post<any>(this.docAPI, message);
+  createDoc(title: string) {
+    return this.http.post<any>(this.docAPI, title);
   }
 }

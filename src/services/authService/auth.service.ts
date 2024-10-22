@@ -13,7 +13,6 @@ export class AuthService {
   private http: HttpClient = inject(HttpClient);
   private apiUserData = `${environment.apiUrl}/v1/authorize`;
   private userData = new BehaviorSubject<UserData | null>(null);
-
   private loginState = new BehaviorSubject<boolean>(false);
 
   constructor() {}

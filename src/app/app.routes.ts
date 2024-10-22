@@ -4,7 +4,7 @@ import { authGuard } from './guards/auth.guard';
 export const routes: Routes = [
   {
     pathMatch: 'full',
-    path: 'q/:id',
+    path: 'doc/:id',
     title: 'Docs|Editor',
     canActivate: [authGuard],
     loadComponent: () =>

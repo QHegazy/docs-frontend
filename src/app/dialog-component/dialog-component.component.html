@@ -1,0 +1,106 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <mat-icon class="blue-icon">note_add</mat-icon>
+    <span class="blue-text">Create New Document</span>
+  </div>
+
+  <mat-dialog-content>
+    <p class="subtitle">Please enter the document details below</p>
+
+    <form [formGroup]="createDocument" class="form-container">
+      <div class="form-field">
+        <div class="label-container">
+          <label class="required-label">Title</label>
+          <span class="char-count" [class.error]="titleLength > 50">
+            {{ titleLength }}/50
+          </span>
+        </div>
+        <input
+          matInput
+          formControlName="title"
+          class="custom-input"
+          placeholder="Title"
+          (input)="updateTitleLength($event)"
+        />
+        <div class="error-container">
+          @if (createDocument.get('title')?.hasError('required') &&
+          createDocument.get('title')?.touched) {
+          <div class="error-message">
+            <mat-icon class="error-icon">error</mat-icon>
+            Title is required
+          </div>
+          } @if (createDocument.get('title')?.hasError('minlength') &&
+          createDocument.get('title')?.touched) {
+          <div class="error-message">
+            <mat-icon class="error-icon">error</mat-icon>
+            Title must be at least 3 characters
+          </div>
+          } @if (createDocument.get('title')?.hasError('maxlength')) {
+          <div class="error-message">
+            <mat-icon class="error-icon">error</mat-icon>
+            Title cannot exceed 50 characters
+          </div>
+          }
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="required-label">Permission</label>
+        <mat-select formControlName="permission" class="custom-select">
+          <mat-select-trigger>
+            <div class="select-trigger">
+              <mat-icon>security</mat-icon>
+              <span>
+                {{
+                  createDocument.get("permission")?.value === "public"
+                    ? "Public - Anyone can view"
+                    : createDocument.get("permission")?.value === "edit"
+                    ? "Anyone can edit - Everyone can view and edit"
+                    : createDocument.get("permission")?.value === "private-edit"
+                    ? "Only I can edit and view"
+                    : "Private - Only you can view"
+                }}
+              </span>
+            </div>
+          </mat-select-trigger>
+
+          <mat-option value="public">
+            <div class="select-option">
+              <mat-icon>public</mat-icon>
+              <span>Public - Anyone can view</span>
+            </div>
+          </mat-option>
+
+          <mat-option value="edit">
+            <div class="select-option">
+              <mat-icon>edit</mat-icon>
+              <span>Public - Anyone can view and edit</span>
+            </div>
+          </mat-option>
+
+          <mat-option value="private-edit">
+            <div class="select-option">
+              <mat-icon>lock</mat-icon>
+              <span>Private - Only I can edit and view</span>
+            </div>
+          </mat-option>
+        </mat-select>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button (click)="onNoClick()" class="cancel-button">
+      Cancel
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      [mat-dialog-close]="createDocument.value"
+      [disabled]="createDocument.invalid"
+      class="create-button"
+    >
+      Create Document
+    </button>
+  </mat-dialog-actions>
+</div>

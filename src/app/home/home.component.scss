@@ -1,6 +1,52 @@
-// .grid img {
-//     width: 100px;
-//     height: 100px;
+/* dialog-component.component.scss */
 
-//     border-radius: 50%;
-// }
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+
+  // General styling for the dialog container
+  max-width: 100%; // Prevents overflow on small screens
+  box-sizing: border-box; // Ensures padding is included in the width
+
+  // For small screens (mobile)
+  @media (max-width: 600px) {
+    width: 90%; // Adjust width to take up most of the screen
+    padding: 15px; // Less padding for smaller screens
+    border-radius: 8px; // Rounded corners for a softer look
+  }
+
+  // For medium screens (tablets)
+  @media (min-width: 601px) and (max-width: 1024px) {
+    width: 80%; // A bit smaller for medium devices
+    max-width: 600px; // Maximum width for larger devices
+  }
+
+  // For larger screens (desktops)
+  @media (min-width: 1025px) {
+    width: 600px; // Keep the width consistent for larger devices
+  }
+}
+
+.dialog-title {
+  font-size: 1.5em; // Adjust the title size
+  margin-bottom: 10px; // Add some space below the title
+  text-align: center; // Center the title text for better alignment
+}
+
+.dialog-content {
+  font-size: 1em; // Adjust the content font size
+  line-height: 1.5; // Improve readability
+  text-align: left; // Align text to the left for better readability
+}
+
+.dialog-actions {
+  display: flex; // Use flexbox for actions
+  justify-content: space-between; // Space between action buttons
+  margin-top: 20px; // Add some space above actions
+
+  button {
+    flex: 1; // Allow buttons to grow and fill space equally
+    margin: 0 5px; // Small margin between buttons
+  }
+}
