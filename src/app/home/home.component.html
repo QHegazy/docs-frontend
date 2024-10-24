@@ -1,58 +1,152 @@
-<div class="container mx-auto p-4">
-  <section class="bg-[#f1f3f48f] p-6 rounded-md">
-    <h1 class="text-left pl-1 pt-2 font-bold text-lg">Recently Added Docs</h1>
+<div class="container mx-auto p-4 min-h-screen">
+
+  <section class="bg-[#f1f3f48f] p-6 rounded-md shadow-sm">
+    <div class="flex items-center justify-between mb-4">
+      <h1 class="text-xl font-bold text-gray-800">Recently Added Docs</h1>
+      @if (isLoading) {
+      <div class="animate-pulse h-2 w-24 bg-gray-200 rounded"></div>
+      }
+    </div>
+
     <div
-      class="my-2 mx-2 grid grid-cols-2 gap-4 sm:grid-cols-5 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8"
+      class="my-2 grid grid-cols-2 gap-4 sm:grid-cols-5 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8"
     >
-      @for (item of list; track $index) {
-      <a (click)="openDialog(item)">
+      @if (isLoading) { @for (loader of [1,2,3,4]; track $index) {
+      <div class="animate-pulse">
+        <div class="bg-gray-200 h-32 rounded-md"></div>
+      </div>
+      } } @else if (list.length === 0) {
+      <div class="col-span-full py-8 text-center text-gray-500">
+        <p>No recently added documents</p>
+      </div>
+      } @else { @for (item of list; track $index) {
+      <button
+        (click)="openDialog(item)"
+        class="group relative focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md"
+        [attr.aria-label]="'Open document ' + item"
+      >
         <img
-          class="bg-auto cursor-pointer hover:border-red-500 border-spacing-2 border-2 rounded-md"
+          class="w-full h-auto transition-transform duration-200 border-2 rounded-md group-hover:border-red-500 group-hover:scale-105"
           src="https://cdn4.iconfinder.com/data/icons/glyph-1-ui-part-4-of-4/100/pack07-05-512.png"
-          alt=""
-          srcset=""
-      /></a>
-
-      }
+          [alt]="'Document ' + item"
+          loading="lazy"
+        />
+        <div
+          class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200"
+        ></div>
+      </button>
+      } }
     </div>
   </section>
+
+  <!-- Documents Section -->
   <section class="my-10">
-    <div class="relative inline-flex">
-      <svg
-        class="w-2 h-2 absolute top-0 right-0 m-4 pointer-events-none"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 412 232"
-      >
-        <path
-          d="M206 171.144L42.678 7.822c-9.763-9.763-25.592-9.763-35.355 0-9.763 9.764-9.763 25.592 0 35.355l181 181c4.88 4.882 11.279 7.323 17.677 7.323s12.796-2.441 17.678-7.322l181-181c9.763-9.764 9.763-25.592 0-35.355-9.763-9.763-25.592-9.763-35.355 0L206 171.144z"
-          fill="#648299"
-          fill-rule="nonzero"
-        />
-      </svg>
-      <select
-        class="border cursor-pointer border-gray-300 rounded-full text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
-      >
-        <option class="text-gray-400 rounded-full">None</option>
-        <option [defaultSelected]="true">Owned by me</option>
-        <option>Edited by anyone</option>
-        <option>Read by anyone</option>
-      </select>
-    </div>
-    <h1 class="text-left pl-1 pt-2 font-bold text-lg">Documents</h1>
     <div
-      class="my-2 mx-2 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6"
     >
-      @for (item of list; track $index) {
-      <a href="">
-        <img
-          class="bg-auto cursor-pointer hover:border-blue-500 border-spacing-2 border-2 ease-in-out transition-colors rounded-md"
-          src="https://ssl.gstatic.com/docs/templates/thumbnails/1wyFqxsRmKm9q--7j4WRmBMn694YdhV6hmNrfh4rVm2E_400.png"
-          alt=""
-          srcset=""
-        />
-      </a>
+      <h1 class="text-xl font-bold text-gray-800 mb-4 sm:mb-0">Documents</h1>
 
-      }
+      <!-- Filter Dropdown -->
+      <div class="relative">
+        <select
+          [(ngModel)]="selectedFilter"
+          (change)="onFilterChange($event)"
+          class="appearance-none bg-white border border-gray-300 rounded-full px-5 py-2 pr-10 text-gray-600 cursor-pointer hover:border-gray-400 focus:outline-none focus:border-blue-500 transition-colors"
+          [attr.aria-label]="'Filter documents'"
+        >
+          <option value="none" class="text-gray-400">None</option>
+          <option value="owned">Owned by me</option>
+          <option value="edited">Edited by anyone</option>
+          <option value="read">Read by anyone</option>
+        </select>
+        <div
+          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4"
+        >
+          <svg
+            class="h-4 w-4 text-gray-500"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    @if (errorMessage) {
+    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg
+            class="h-5 w-5 text-red-400"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-red-700">{{ errorMessage }}</p>
+        </div>
+      </div>
+    </div>
+    }
+
+    <div
+      class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
+    >
+      @if (isLoading) { @for (loader of [1,2,3,4,5,6]; track $index) {
+      <div class="animate-pulse">
+        <div class="bg-gray-200 h-40 rounded-md"></div>
+      </div>
+      } } @else if (list.length === 0) {
+      <div class="col-span-full py-12 text-center text-gray-500">
+        <p>No documents found</p>
+        <button
+          (click)="openDialog(0)"
+          class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          Create your first document
+        </button>
+      </div>
+      } @else { @for (item of list; track $index) {
+      <a
+        [routerLink]="['/doc', item]"
+        class="group block focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
+      >
+        <div class="relative overflow-hidden rounded-md">
+          <img
+            class="w-full h-auto transition-transform duration-200 border-2 rounded-md group-hover:border-blue-500 group-hover:scale-105"
+            src="https://ssl.gstatic.com/docs/templates/thumbnails/1wyFqxsRmKm9q--7j4WRmBMn694YdhV6hmNrfh4rVm2E_400.png"
+            [alt]="'Document ' + item"
+            loading="lazy"
+          />
+          <div
+            class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200"
+          >
+            <span class="sr-only">Open document {{ item }}</span>
+          </div>
+        </div>
+      </a>
+      } }
     </div>
   </section>
+
+  <!-- Loading Indicator -->
+  @if (isLoading) {
+  <div class="fixed top-0 left-0 w-full">
+    <div
+      class="h-1 bg-blue-500 animate-[loading_2s_ease-in-out_infinite]"
+    ></div>
+  </div>
+  }
 </div>

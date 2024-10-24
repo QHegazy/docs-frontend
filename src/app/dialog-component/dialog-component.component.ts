@@ -41,7 +41,7 @@ export class DialogComponentComponent {
       Validators.minLength(3),
       Validators.maxLength(50),
     ]),
-    permission: new FormControl('private', [Validators.required]),
+    permission: new FormControl('private-edit', [Validators.required]),
   });
 
   updateTitleLength(event: Event): void {

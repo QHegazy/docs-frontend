@@ -1,5 +1,5 @@
 <nav
-  class="static mt-5 mb-8 inset-x-0 top-0 z-30 mx-auto w-full max-w-screen-md border border-gray-100 bg-white/80 py-3 shadow backdrop-blur-lg md:top-6 md:rounded-3xl lg:max-w-screen-lg"
+  class="sticky mt-5 mb-8 inset-x-0 top-0 z-30 mx-auto w-full max-w-screen-md border border-gray-100 bg-white/80 py-3 shadow backdrop-blur-lg md:rounded-3xl lg:max-w-screen-lg"
 >
   <div class="px-4">
     <div class="flex items-center justify-between">
@@ -9,48 +9,57 @@
           <p class="px-1 text-xl font-semibold text-gray-900">Docs</p>
         </a>
       </div>
-
       <div class="flex items-center justify-end gap-3">
-        @if (user) {
-        <ng-container>
-          <div class="relative group">
-            <picture class="items-center justify-center cursor-pointer">
-              <img
-                [src]="user.ImageURL"
-                [alt]="user.Name"
-                class="w-10 h-10 rounded-full hover:ring-2 transition-all duration-300 ease-in-out ring-blue-600 object-cover"
-              />
-            </picture>
-            <ul
-              class="absolute top-10 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto w-48 border border-gray-200"
-            >
-              <li class="px-4 py-2 border-b border-gray-200">
-                <p class="text-gray-800 font-medium">{{ user.Name }}</p>
-              </li>
-              <li class="px-4 py-2 border-b border-gray-200">
-                <p class="text-gray-600 text-sm truncate">{{ user.Email }}</p>
-              </li>
-              <li class="px-4 py-2">
-                <button
-                  class="w-full text-left cursor-pointer inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                  (click)="logout()"
-                >
-                  Logout
-                </button>
-              </li>
-            </ul>
-          </div>
-        </ng-container>
-
-        } @else {
-        <ng-container>
-          <button
-            class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-            (click)="login()"
+        @defer (on immediate) { @if (user) {
+        <div class="relative group">
+          <picture class="items-center justify-center cursor-pointer">
+            <img
+              [src]="user.ImageURL"
+              [alt]="user.Name"
+              class="w-10 h-10 rounded-full hover:ring-2 transition-all duration-300 ease-in-out ring-blue-600 object-cover"
+            />
+          </picture>
+          <ul
+            class="absolute top-10 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto w-48 border border-gray-200"
           >
-            login
-          </button>
-        </ng-container>
+            <li class="px-4 py-2 border-b border-gray-200">
+              <p class="text-gray-800 font-medium">{{ user.Name }}</p>
+            </li>
+            <li class="px-4 py-2 border-b border-gray-200">
+              <p class="text-gray-600 text-sm truncate">{{ user.Email }}</p>
+            </li>
+            <li class="px-4 py-2">
+              <button
+                class="w-full text-left cursor-pointer inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                (click)="logout()"
+              >
+                Logout
+              </button>
+            </li>
+          </ul>
+        </div>
+        } @else {
+        <button
+          class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          (click)="login()"
+        >
+          Login
+        </button>
+        } } @placeholder {
+        <div class="animate-pulse flex items-center space-x-2">
+          <div class="h-10 w-10 rounded-full bg-gray-200"></div>
+        </div>
+        } @loading (minimum 200ms) {
+        <div class="animate-pulse flex items-center space-x-2">
+          <div class="h-10 w-10 rounded-full bg-gray-400"></div>
+        </div>
+        } @error {
+        <button
+          class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+          (click)="checkUserLogin()"
+        >
+          Retry
+        </button>
         }
       </div>
     </div>

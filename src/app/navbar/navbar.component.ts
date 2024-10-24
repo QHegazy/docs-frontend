@@ -1,8 +1,17 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  OnDestroy,
+  PLATFORM_ID,
+  Inject,
+} from '@angular/core';
 import { AuthService } from '../../services/authService/auth.service';
-import { environment } from '../../environments/environment';
 import { UserData } from '../newTypes/user-data';
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule, isPlatformBrowser } from '@angular/common';
+import { Subscription } from 'rxjs';
+import { AuthResponse } from '../newTypes/auth';
+
 @Component({
   selector: 'app-navbar',
   standalone: true,
@@ -10,40 +19,73 @@ import { AsyncPipe, CommonModule } from '@angular/common';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   user?: UserData | null;
+  isLoading = true;
+  error: string | null = null;
   private authService: AuthService = inject(AuthService);
+  private subscription = new Subscription();
+  private isBrowser: boolean;
+
+  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   ngOnInit(): void {
-    this.checkUserLogin();
+    if (this.isBrowser) {
+      this.checkUserLogin();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   checkUserLogin(): void {
-    this.authService.login().subscribe({
-      next: (userData: any) => {
-        this.user = userData.data;
-      },
-      error: (err) => {
-        console.error('Login failed', err);
-      },
-    });
-  }
+    if (!this.isBrowser) return;
 
-  login() {
-    window.location.href = environment.apiUrl + '/v1/auth/google/login';
-  }
+    this.isLoading = true;
+    this.error = null;
 
-  logout() {
-    this.authService.logout().subscribe({
-      next: (logoutData) => {
-        if (logoutData.status === 200) {
+    this.subscription.add(
+      this.authService.login().subscribe({
+        next: (userData: AuthResponse) => {
+          this.user = userData.data;
+          this.isLoading = false;
+        },
+        error: (err: Error) => {
+          this.error = err.message;
           this.user = null;
-          window.location.reload();
-        }
-      },
-      error: (err) => {
-        console.error('Logout failed', err);
-      },
-    });
+          this.isLoading = false;
+        },
+      })
+    );
+  }
+
+  login(): void {
+    this.authService.initiateGoogleLogin();
+  }
+
+  logout(): void {
+    if (!this.isBrowser) return;
+
+    this.isLoading = true;
+    this.error = null;
+
+    this.subscription.add(
+      this.authService.logout().subscribe({
+        next: () => {
+          this.user = null;
+          this.isLoading = false;
+          if (this.isBrowser) {
+            window.location.reload();
+          }
+        },
+        error: (err: Error) => {
+          this.error = err.message;
+          this.isLoading = false;
+        },
+      })
+    );
   }
 }
