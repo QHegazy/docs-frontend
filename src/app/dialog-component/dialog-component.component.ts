@@ -41,12 +41,13 @@ export class DialogComponentComponent {
       Validators.minLength(3),
       Validators.maxLength(50),
     ]),
-    permission: new FormControl('private-edit', [Validators.required]),
+    permission: new FormControl('private', [Validators.required]),
   });
 
   updateTitleLength(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.titleLength = input.value.length;
+    
   }
 
   onNoClick(): void {

@@ -93,16 +93,15 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((result) => {
         if (result) {
-          this.createNewDocument(result.title);
+          this.createNewDocument(result);
         }
       });
   }
 
-  createNewDocument(title: string) {
+  createNewDocument(data: object) {
     this.isLoading = true;
-
     this.docService
-      .createDoc(title)
+      .createDoc(data)
       .pipe(
         takeUntil(this.destroy$),
         catchError((error) => {
@@ -118,7 +117,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         next: (response) => {
           if (response.status === 200) {
             this.showSuccess('Document created successfully');
-            console.log(response.data.mongoID)
+            console.log(response.data.mongoID);
             window.location.href = `doc/${response.data.mongoID}`;
           } else {
             this.showError('Failed to create document');

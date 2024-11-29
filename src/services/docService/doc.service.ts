@@ -17,11 +17,12 @@ export class DocService {
   }
 
   // Create a new document
-  createDoc(title: string) {
+  createDoc(data: any) {
+    console.log(data);
     return this.http
       .post<any>(
         this.docAPI,
-        { title: title },
+        { title: data.title, public: data.permission },
         {
           headers: new HttpHeaders({
             'Content-Type': 'application/json',
