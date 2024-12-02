@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private snackBar = inject(MatSnackBar);
 
   isLoading = false;
-  list: number[] = [1, 2, 3, 4, 5];
+  list: number[] = [];
   selectedFilter: FilterType = 'owned';
   errorMessage: string | null = null;
 
@@ -57,11 +57,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     }, 1500);
 
     // Actual implementation would look like this:
-    /*
-    this.docService.getDocuments(this.selectedFilter)
+    this.docService
+      .getDocuments(this.selectedFilter)
       .pipe(
         takeUntil(this.destroy$),
-        catchError(error => {
+        catchError((error) => {
           this.errorMessage = 'Failed to load documents. Please try again.';
           console.error('Error loading documents:', error);
           return [];
@@ -70,10 +70,9 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         })
       )
-      .subscribe(documents => {
+      .subscribe((documents) => {
         this.list = documents;
       });
-    */
   }
 
   openDialog(item: number): void {

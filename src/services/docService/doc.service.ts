@@ -10,6 +10,35 @@ export class DocService {
   private http: HttpClient = inject(HttpClient);
   private api = environment.apiUrl;
   private docAPI = `${this.api}/v1/doc`;
+  retrieveUserOwnDocs() {
+    return this.http
+      .get<any>(`${this.docAPI}/own`)
+      .pipe(catchError(this.handleError));
+  }
+
+  retrieveUserSharedDocs() {
+    return this.http
+      .get<any>(`${this.docAPI}/shared`)
+      .pipe(catchError(this.handleError));
+  }
+
+  retrieveUserRecentDocs() {
+    return this.http
+      .get<any>(`${this.docAPI}/recent`)
+      .pipe(catchError(this.handleError));
+  }
+  getDocuments(filter: string) {
+    switch (filter) {
+      case 'owned':
+        return this.retrieveUserOwnDocs();
+      case 'shared':
+        return this.retrieveUserSharedDocs();
+      case 'recent':
+        return this.retrieveUserRecentDocs();
+      default:
+        return this.retrieveUserRecentDocs();
+    }
+  }
   getDocById(id: string) {
     return this.http
       .get<any>(`${this.docAPI}/${id}`)
