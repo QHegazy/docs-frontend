@@ -3,3 +3,8 @@ export interface UserData {
   ImageURL: string;
   Email: string;
 }
+export interface ApiResponse<T> {
+  status: number;
+  message: string;
+  data: T;
+}

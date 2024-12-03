@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil, catchError, finalize } from 'rxjs';
 import { DocService } from '../../services/docService/doc.service';
 import { DialogComponentComponent } from '../dialog-component/dialog-component.component';
+import { CapitalizePipe } from '../../pipes/capitalize.pipe';
 
 interface Document {
   id: string;
@@ -27,6 +28,7 @@ type FilterType = 'none' | 'owned' | 'edited' | 'read';
     MatDialogModule,
     MatSnackBarModule,
     FormsModule,
+    CapitalizePipe,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
@@ -37,7 +39,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private snackBar = inject(MatSnackBar);
 
   isLoading = false;
-  list: number[] = [];
+  list: number[] = [1, 2, 3, 4, 5];
   selectedFilter: FilterType = 'owned';
   errorMessage: string | null = null;
 
@@ -51,12 +53,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.errorMessage = null;
 
-    // Simulate loading time
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 1500);
-
-    // Actual implementation would look like this:
     this.docService
       .getDocuments(this.selectedFilter)
       .pipe(
@@ -71,7 +67,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe((documents) => {
-        this.list = documents;
+        this.list = documents.data;
       });
   }
 

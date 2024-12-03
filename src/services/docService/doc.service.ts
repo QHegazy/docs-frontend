@@ -10,15 +10,23 @@ export class DocService {
   private http: HttpClient = inject(HttpClient);
   private api = environment.apiUrl;
   private docAPI = `${this.api}/v1/doc`;
+  private defaultOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    }),
+    withCredentials: true,
+  };
+
   retrieveUserOwnDocs() {
     return this.http
-      .get<any>(`${this.docAPI}/own`)
+      .get<any>(`${this.docAPI}/own`, this.defaultOptions)
       .pipe(catchError(this.handleError));
   }
 
   retrieveUserSharedDocs() {
     return this.http
-      .get<any>(`${this.docAPI}/shared`)
+      .get<any>(`${this.docAPI}/shared`, this.defaultOptions)
       .pipe(catchError(this.handleError));
   }
 

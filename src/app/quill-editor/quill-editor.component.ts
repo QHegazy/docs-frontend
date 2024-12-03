@@ -6,6 +6,7 @@ import {
   ViewEncapsulation,
   inject,
   OnInit,
+  signal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import Quill from 'quill';
@@ -14,17 +15,26 @@ import { ActivatedRoute } from '@angular/router';
 import { interval, timeout, timer } from 'rxjs';
 import { AuthService } from '../../services/authService/auth.service';
 
+import { UUID } from 'crypto';
+import { QuillDoc } from '../newTypes/doc';
+import { CapitalizePipe } from '../../pipes/capitalize.pipe';
+import { BrowserDatabase } from '../db/BrowserDatabase';
+
 @Component({
   selector: 'app-quill-editor',
   standalone: true,
-  imports: [],
+  imports: [CapitalizePipe],
   templateUrl: './quill-editor.component.html',
   encapsulation: ViewEncapsulation.None,
-  styleUrl: './quill-editor.component.scss',
+  styleUrls: ['./quill-editor.component.scss'],
 })
 export class QuillEditorComponent implements AfterViewInit, OnInit {
+  quilDoc = signal<QuillDoc | null>(null);
+  private db!: BrowserDatabase;
+  private debounceTimeout: NodeJS.Timeout | null = null;
+  private debounceDelay = 1000;
   private quill!: Quill;
-  id!: string;
+  id!: UUID;
   doc_service = inject(DocServiceCommunication);
   auth: AuthService = inject(AuthService);
   message: any = 'wq';
@@ -38,39 +48,30 @@ export class QuillEditorComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    this.id = this.route.snapshot.params['id'];
+    this.id = this.route.snapshot.params['id'] as UUID;
+    this.doc_service.syncWithServer(this.id).subscribe({
+      next: (data) => {
+        this.quilDoc.set(data);
+      },
+      error: (err) => {
+        console.error('Error syncing with server:', err);
+      },
+    });
+
     this.doc_service.joinroom(this.id);
+
+    // Initialize the IndexedDB for caching data locally
+    this.db = new BrowserDatabase();
   }
 
   async ngAfterViewInit(): Promise<void> {
     if (isPlatformBrowser(this.platformId)) {
-      // this.auth.login().subscribe({
-      //   next: (data) => {
-      //     console.log(data);
-      //     return true;
-      //   },
-      //   error: (err) => {
-      //     console.error('Login failed', err);
-      //   },
-      // });
       await this.loadQuill();
-      this.doc_service.getDocMessage().subscribe({
-        next: (data) => {
-          console.log(data, 'Document data received');
-          if (data && data.ops) {
-            this.quill.setContents(data); // Set contents only if data is valid
-          } else {
-            console.error('Invalid data received:', data);
-          }
-        },
-        error: (error) => {
-          console.error('Error fetching document message:', error);
-        },
-      });
+      await this.retrieveDoc();
       const messages = this.doc_service.getRoomMessage();
       messages.subscribe((message: any) => {
         if (this.quill) {
-          this.quill.updateContents(message); 
+          this.quill.updateContents(message);
         }
       });
     }
@@ -116,26 +117,60 @@ export class QuillEditorComponent implements AfterViewInit, OnInit {
         theme: 'snow',
       });
 
-      // Add the 'text-change' listener
+      // Add the 'text-change' listener with debouncing
       this.quill.on('text-change', this.sendData);
     } catch (error) {
       console.error('Error loading Quill:', error);
     }
   }
 
+  // Debounced sendData method
   sendData(delta: any, oldDelta: any, source: string) {
     if (source === 'api') {
-      return;
+      return; // Ignore changes from the API
     } else {
-      this.doc_service.sendtoroom(this.id, delta);
-      this.doc_service.sendMessage(delta);
-      this.save()
+      if (this.debounceTimeout) {
+        clearTimeout(this.debounceTimeout);
+      }
+
+      // Save data locally in IndexedDB first
+      this.db.saveDoc(this.id, delta);
+
+      // Debounce the call to sync data with the server
+      this.debounceTimeout = setTimeout(() => {
+        this.doc_service.sendtoroom(this.id, delta); // Send delta to room (server)
+        this.save(); // Save changes to the server
+      }, this.debounceDelay); // Adjust debounce delay (1 second)
     }
   }
-  save() {
-    this.doc_service.saveDocById("670e7027d2ebe79b16092671", this.quill.getContents());
-    console.log("saved darar")
-    console.log(this.quill.getContents());
+
+  async save() {
+    const mongoId = this.quilDoc()?.mongoId;
+    if (mongoId) {
+      this.doc_service.saveDocById(mongoId, this.quill.getContents());
+    } else {
+      console.error('Document ID is missing');
+    }
   }
-  
+
+  async retrieveDoc() {
+    const mongoId = this.quilDoc()?.mongoId;
+    if (mongoId) {
+      this.doc_service.getDocMessage(mongoId).subscribe({
+        next: (data) => {
+          console.log(data, 'Document data received');
+          if (data && data.ops) {
+            this.quill.setContents(data);
+          } else {
+            console.error('Invalid data received:', data);
+          }
+        },
+        error: (error) => {
+          console.error('Error fetching document message:', error);
+        },
+      });
+    } else {
+      console.error('Document ID is missing');
+    }
+  }
 }
